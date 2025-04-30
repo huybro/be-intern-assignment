@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { z } from 'zod';
 
 export const createUserSchema = Joi.object({
   firstName: Joi.string().required().min(2).max(255).messages({
@@ -36,3 +37,26 @@ export const updateUserSchema = Joi.object({
   .messages({
     'object.min': 'At least one field must be provided for update',
   });
+
+export const getFollowersSchema = z.object({
+  params: z.object({
+    id: z.string().min(1),
+  }),
+  query: z.object({
+    limit: z.string().optional().transform((val) => val ? parseInt(val) : 10),
+    offset: z.string().optional().transform((val) => val ? parseInt(val) : 0),
+  }),
+});
+
+export const getUserActivitySchema = z.object({
+  params: z.object({
+    id: z.string().min(1),
+  }),
+  query: z.object({
+    limit: z.string().optional().transform((val) => val ? parseInt(val) : 10),
+    offset: z.string().optional().transform((val) => val ? parseInt(val) : 0),
+    type: z.enum(['post', 'like', 'follow']).optional(),
+    startDate: z.string().datetime().optional(),
+    endDate: z.string().datetime().optional(),
+  }),
+});
